@@ -1,0 +1,61 @@
+@startuml UC02_Dang_nhap_tuan_tu
+' Đồng bộ với so-do-tuan-tu-uc02-dang-nhap.puml
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Người dùng\n(KH / NV / Admin)" as U
+boundary "Form đăng nhập" as F
+control "Điều khiển đăng nhập" as C
+database "CSDL" as DB
+
+== Bước 1-2: Truy cập và gửi thông tin ==
+U -> F: 1. Truy cập trang đăng nhập
+activate F
+F --> U: Hiển thị form (email, mật khẩu)
+deactivate F
+
+U -> F: 2. Gửi thông tin đăng nhập
+activate F
+F -> C: Yêu cầu đăng nhập (email, mật khẩu)
+activate C
+deactivate F
+
+== Bước 3-4: Xác thực và kiểm tra khóa ==
+C -> DB: 3. Truy vấn tài khoản theo email\n(nguoi_dungs hoặc admins)
+activate DB
+DB --> C: Bản ghi / không có
+deactivate DB
+
+alt [3a] Sai - không tồn tại hoặc mật khẩu không khớp
+  activate F
+  C --> F: Thông báo lỗi
+  F --> U: "Email hoặc mật khẩu không đúng"
+  deactivate F
+  deactivate C
+else [đúng] Thông tin hợp lệ
+  C -> C: 4. Kiểm tra bi_khoa\n(chỉ KH/NV trong nguoi_dungs)
+
+  alt [4a] Tài khoản bị khóa
+    activate F
+    C --> F: Thông báo khóa
+    F --> U: "Tài khoản đã bị khóa"\n(liên hệ Admin)
+    deactivate F
+    deactivate C
+  else [chưa khóa hoặc Admin] Cho phép đăng nhập
+    C -> C: 5. Tạo phiên (session / token),\nxác định vai trò
+    activate F
+    C --> F: Phiên + định hướng theo vai trò
+    F --> U: Chuyển đến trang chủ / khu vực phù hợp
+    deactivate F
+    deactivate C
+    note right of U
+      Điều kiện sau: có phiên làm việc,
+      quyền theo vai trò.
+      6. Kết thúc use case.
+    end note
+  end
+end
+
+@enduml

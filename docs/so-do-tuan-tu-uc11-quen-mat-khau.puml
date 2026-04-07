@@ -1,0 +1,71 @@
+@startuml UC11_Quen_mat_khau_tuan_tu
+title UC11 - Quên mật khẩu (biểu đồ tuần tự - rút gọn)
+
+' nguoi_dungs, password_resets | mẫu Form giống UC12
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Người dùng\n(KH / NV)" as U
+boundary "Form quên mật khẩu và đặt lại mật khẩu" as F
+control "Điều khiển quên mật khẩu và đặt lại mật khẩu" as C
+database "CSDL" as DB
+
+== Gửi link qua email (bước 1-5) ==
+U -> F: "1-2. Truy cập, nhập email, gửi yêu cầu khôi phục"
+activate F
+F -> C: "Email"
+activate C
+deactivate F
+
+C -> DB: "SELECT nguoi_dungs WHERE email = ?"
+activate DB
+DB --> C: "Có / không"
+deactivate DB
+
+alt [3a] Không tồn tại
+  C --> F: "Lỗi"
+  F --> U: "Email chưa được đăng ký"
+  deactivate C
+else Hợp lệ
+  C -> DB: "INSERT password_resets (token, het_han, ...)"
+  activate DB
+  DB --> C: OK
+  deactivate DB
+  C -> C: "3-5. Tạo token + gửi email có link đặt lại"
+  deactivate C
+end
+
+== Đặt lại mật khẩu (bước 6-12) ==
+U -> F: "6-8. Mở link (trong hạn) + nhập MK mới + xác nhận"
+activate F
+F -> C: "Token + mật khẩu mới + xác nhận"
+activate C
+deactivate F
+
+C -> DB: "SELECT token hợp lệ trong password_resets"
+activate DB
+DB --> C: "OK / hết hạn"
+deactivate DB
+
+alt [9a] Token lỗi / hết hạn
+  C --> F: "Lỗi"
+  F --> U: "Link đã hết hạn — gửi lại quên mật khẩu"
+  deactivate C
+else Hợp lệ
+  C -> DB: "UPDATE nguoi_dungs.mat_khau\nDELETE token (password_resets)"
+  activate DB
+  DB --> C: OK
+  deactivate DB
+  C --> F: "Thành công"
+  F --> U: "11-12. Chuyển trang đăng nhập — kết thúc UC"
+  deactivate C
+end
+
+note over U
+  Điều kiện trước: đã có tài khoản (KH / NV).
+  Điều kiện sau: đăng nhập bằng mật khẩu mới.
+end note
+
+@enduml

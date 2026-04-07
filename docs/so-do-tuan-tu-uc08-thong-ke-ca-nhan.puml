@@ -1,0 +1,71 @@
+@startuml UC08_Thong_ke_ca_nhan_tuan_tu
+title UC08 - Thống kê cá nhân (biểu đồ tuần tự)
+
+' actor | boundary | control | database
+' Luồng: đặc tả UC08 — tổng quan, theo loại rác, (tùy chọn) theo thời gian
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Khách hàng" as KH
+boundary "Form thống kê cá nhân" as F
+control "Điều khiển thống kê" as C
+database "CSDL" as DB
+
+== Bước 1: Truy cập (đã đăng nhập) ==
+KH -> F: 1. Truy cập trang thống kê cá nhân
+activate F
+F -> C: Yêu cầu thống kê (session / id khách hàng)
+activate C
+deactivate F
+
+== Bước 2-3: Tải dữ liệu và hiển thị tổng quan + theo loại rác ==
+C -> DB: "SELECT COUNT, SUM khối lượng từ yeu_cau_thu_goms\nWHERE id_khach_hang = KH"
+activate DB
+DB --> C: Tổng yêu cầu, tổng kg (theo yêu cầu đã xử lý / hoàn thành theo quy tắc)
+deactivate DB
+
+C -> DB: "SELECT SUM điểm (earn) và SUM điểm (redeem)\nFROM giao_dich_diems WHERE id_nguoi_dung = KH"
+activate DB
+DB --> C: Tổng điểm nhận, tổng điểm đã dùng
+deactivate DB
+
+C -> DB: "GROUP BY loại rác\nJOIN yeu_cau_thu_goms, loai_racs\nSUM kg theo từng loại"
+activate DB
+DB --> C: kg Nhựa, Kim loại, Giấy, …
+deactivate DB
+
+activate F
+C --> F: Gói dữ liệu đầy đủ
+F --> KH: 2. Tổng quan: tổng yêu cầu, tổng kg rác,\ntổng điểm nhận, tổng điểm đã dùng
+F --> KH: 3. Thống kê theo loại rác (kg từng loại)
+deactivate F
+deactivate C
+
+opt 4-5. Lọc theo thời gian (tùy chọn)
+  KH -> F: 4. Chọn khoảng (ngày / tuần / tháng)
+  activate F
+  F -> C: Yêu cầu thống kê theo khoảng
+  activate C
+  deactivate F
+
+  C -> DB: "Cùng các truy vấn trên có điều kiện thời gian\n(ngày_tạo / ngày_hoàn_thành / giao_dich)"
+  activate DB
+  DB --> C: Số liệu trong khoảng
+  deactivate DB
+
+  activate F
+  C --> F: Dữ liệu biểu đồ theo khoảng
+  F --> KH: 5. Thống kê và biểu đồ theo khoảng đã chọn
+  deactivate F
+  deactivate C
+end
+
+note over KH
+  Điều kiện trước: Khách hàng đã đăng nhập.
+  6. Kết thúc use case.
+  (Không có luồng thay thế.)
+end note
+
+@enduml

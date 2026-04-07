@@ -1,0 +1,31 @@
+@startuml Sơ đồ hoạt động - Đăng ký tài khoản
+title Đăng ký
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 13
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Yêu cầu đăng ký tài khoản;
+
+repeat
+  |Hệ thống|
+  :Yêu cầu nhập thông tin đăng ký;
+  |Người dùng|
+  :Nhập thông tin đăng ký\n(Họ tên, Email, Mật khẩu...);
+  |Hệ thống|
+  :Xác thực thông tin;
+repeat while (Còn sai?) is (Có)
+->Không;
+
+|Hệ thống|
+:Lưu thông tin người dùng;
+:Hiển thị thông báo đăng ký thành công;
+stop
+
+@enduml

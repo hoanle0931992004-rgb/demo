@@ -1,0 +1,44 @@
+%% Sơ đồ hoạt động - Quên mật khẩu (UC11)
+%% 2 swimlanes: Người dùng, Hệ thống — cùng cấu trúc với so-do-hoat-dong-dang-nhap.mmd
+%% Xem tại: https://mermaid.live
+
+flowchart TB
+    subgraph NguoiDung["Người dùng"]
+        direction TB
+        U0([Bắt đầu])
+        U1[Truy cập trang quên mật khẩu và nhập email đăng ký]
+        U2[Gửi yêu cầu khôi phục mật khẩu]
+        U3[Mở link trong email]
+        U4[Nhập mật khẩu mới và xác nhận]
+    end
+
+    subgraph HeThong["Hệ thống"]
+        direction TB
+        H1{Email tồn tại?}
+        H2[Tạo token, lưu password_resets có thời hạn]
+        H3[Gửi email chứa link đặt lại mật khẩu]
+        H4[Hiển thị form mật khẩu mới và xác nhận]
+        H5{Token còn hợp lệ?}
+        H6[Cập nhật mật khẩu mới, xóa token]
+        H7[Thông báo thành công, chuyển trang đăng nhập]
+        H8([Kết thúc])
+        H9[Thông báo email chưa đăng ký]
+        H10[Thông báo link đã hết hạn]
+    end
+
+    U0 --> U1
+    U1 --> U2
+    U2 --> H1
+    H1 -->|Không| H9
+    H9 --> U1
+    H1 -->|Có| H2
+    H2 --> H3
+    H3 --> U3
+    U3 --> H4
+    H4 --> U4
+    U4 --> H5
+    H5 -->|Không| H10
+    H10 --> U1
+    H5 -->|Có| H6
+    H6 --> H7
+    H7 --> H8

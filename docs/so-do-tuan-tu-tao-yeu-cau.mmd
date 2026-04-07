@@ -1,0 +1,37 @@
+%% Biểu đồ tuần tự - Tạo yêu cầu thu gom
+sequenceDiagram
+    participant U as Người dùng
+    participant F as Form
+    participant C as Control
+    participant D as Database
+
+    U->>F: Truy cập form tạo yêu cầu
+    F->>C: GET /api/waste-types
+    C->>D: SELECT WasteType
+    D->>C: Danh sách loại rác
+    C->>F: Loại rác
+    F->>U: Hiển thị form
+
+    U->>F: Nhập thông tin, tải ảnh (tùy chọn)
+
+    opt Có tải ảnh
+        U->>F: Tải ảnh rác
+        F->>C: POST /api/ai/analyze
+        C->>C: AI phân tích ảnh
+        C->>F: Loại rác dự đoán
+        F->>U: Tự điền loại rác
+    end
+
+    U->>F: Xác nhận, gửi yêu cầu
+    F->>C: POST /api/collection-requests
+    C->>C: Xác thực Auth, dữ liệu
+
+    alt Thông tin hợp lệ
+        C->>D: INSERT CollectionRequest
+        D->>C: Đã lưu
+        C->>F: 201 Created
+        F->>U: Thông báo thành công
+    else Thông tin không hợp lệ
+        C->>F: 400 Bad Request
+        F->>U: Hiển thị lỗi
+    end

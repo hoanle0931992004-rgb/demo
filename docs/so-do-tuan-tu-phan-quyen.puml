@@ -1,0 +1,75 @@
+@startuml UC15_Phan_quyen_tuan_tu
+' Dong bo voi so-do-tuan-tu-uc15-phan-quyen.puml
+
+title UC15 - Quản lý phân quyền (Admin) - biểu đồ tuần tự
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Quản trị viên" as AD
+boundary "Form quản lý và phân quyền" as F
+control "Điều khiển quản lý và phân quyền" as C
+database "CSDL" as DB
+
+note over AD
+  Điều kiện trước: Admin đã đăng nhập.
+end note
+
+== Bước 1-2: Truy cập và danh sách ==
+AD -> F: 1. Truy cập trang quản lý phân quyền\n(đã đăng nhập Admin)
+activate F
+F -> C: Yêu cầu dữ liệu phân quyền (session Admin)
+activate C
+deactivate F
+
+C -> DB: "SELECT id, ho_ten, email, vai_tro, bi_khoa\nFROM nguoi_dungs\nORDER BY ho_ten"
+activate DB
+DB --> C: "Danh sách người dùng và vai trò hiện tại"
+deactivate DB
+
+activate F
+C --> F: "Gói dữ liệu danh sách"
+F --> AD: "2. Hiển thị danh sách người dùng và vai trò hiện tại"
+deactivate F
+deactivate C
+
+== Bước 3-8: Thay đổi và lưu ==
+AD -> F: "3. Chọn người dùng và thay đổi vai trò (CUSTOMER / STAFF)"
+activate F
+F -> C: "Ghi nhận id người dùng và vai_trò mới trên form"
+activate C
+deactivate F
+
+opt 4. Cập nhật quyền truy cập chi tiết (tùy chọn)
+  AD -> F: "Điều chỉnh quyền theo chức năng (UI)"
+  activate F
+  F -> C: "Gói quyền chi tiết theo chức năng"
+  deactivate F
+  C -> C: "Ánh xạ quyền - vai_trò (tầng ứng dụng,\nkhông bảng RBAC chi tiết trong CSDL 10 bảng)"
+end
+
+AD -> F: "5. Xác nhận lưu"
+activate F
+F -> C: "Yêu cầu ghi nhận thay đổi"
+activate C
+deactivate F
+
+C -> DB: "UPDATE nguoi_dungs\nSET vai_tro = ?, ngay_cap_nhat = NOW()\nWHERE id = ?\n(và các trường liên quan nếu có)"
+activate DB
+DB --> C: OK
+deactivate DB
+
+activate F
+C --> F: "Đã cập nhật"
+F --> AD: "7. Thông báo thành công"
+deactivate F
+deactivate C
+
+note over AD
+  8. Kết thúc use case.
+  Điều kiện sau: Vai trò và quyền đã cập nhật
+  (vai_trò trên CSDL; quyền chức năng theo vai_trò trong ứng dụng).
+end note
+
+@enduml

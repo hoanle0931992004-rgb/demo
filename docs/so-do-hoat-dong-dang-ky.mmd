@@ -1,0 +1,27 @@
+%% Sơ đồ hoạt động - Đăng ký tài khoản
+%% 2 swimlanes: Người dùng, Hệ thống
+%% Xem trực tiếp tại: https://mermaid.live
+
+flowchart TB
+    subgraph NguoiDung["👤 Người dùng"]
+        direction TB
+        A1([Bắt đầu])
+        A3[Nhập thông tin đăng ký / Đăng ký]
+    end
+
+    subgraph HeThong["⚙️ Hệ thống"]
+        direction TB
+        A2[Yêu cầu nhập thông tin đăng ký]
+        A4{Xác thực thông tin}
+        A5[Lưu thông tin đăng ký]
+        A6[Thông báo đăng ký thành công]
+        A7([Kết thúc])
+    end
+
+    A1 --> A2
+    A2 --> A3
+    A3 --> A4
+    A4 -->|Đúng| A5
+    A5 --> A6
+    A6 --> A7
+    A4 -->|Sai| A2

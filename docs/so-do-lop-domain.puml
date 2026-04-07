@@ -1,0 +1,101 @@
+@startuml so_do_lop_domain
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+title Sơ đồ lớp miền dữ liệu — Hệ thống thu gom rác tái chế
+
+class Admin {
+  +id: String
+  +email: String
+  +matKhau: String
+  +hoTen: String
+  +ngayTao: DateTime
+  +ngayCapNhat: DateTime
+}
+
+class NguoiDung {
+  +id: String
+  +email: String
+  +matKhau: String
+  +hoTen: String
+  +vaiTro: String
+  +diem: int
+  +biKhoa: boolean
+  +idAdminKhoa: String <<FK>>
+  --
+  CUSTOMER | STAFF
+}
+
+class PasswordReset {
+  +id: String
+  +token: String
+  +hetHan: DateTime
+}
+
+class LoaiRac {
+  +idLoaiRac: String
+  +tenLoai: String
+  +diemTrenKg: Decimal
+  +hoatDong: boolean
+}
+
+class YeuCauThuGom {
+  +idYeuCau: String
+  +soLuong: Decimal
+  +khoiLuongXacMinh: Decimal
+  +diaChi: String
+  +trangThai: String
+  +diemTichLuy: int
+  +urlAnh: String
+}
+
+class LichSuTrangThai {
+  +id: String
+  +trangThai: String
+  +ghiChu: String
+  +ngayTao: DateTime
+}
+
+class PhanThuong {
+  +idPhanThuong: String
+  +tenPhanThuong: String
+  +diemDoi: int
+  +soLuongCon: int
+}
+
+class LichSuDoiThuong {
+  +id: String
+  +diemSuDung: int
+  +trangThai: String
+}
+
+class GiaoDichDiem {
+  +id: String
+  +soDiem: int
+  +loai: String
+  +idThamChieu: String
+}
+
+class ThongBao {
+  +id: String
+  +loai: String
+  +tieuDe: String
+  +daDoc: boolean
+}
+
+Admin "1" --o "0..*" NguoiDung : khóa (id_admin_khoa)
+
+NguoiDung "1" *-- "0..*" PasswordReset
+NguoiDung "1" *-- "0..*" YeuCauThuGom : đặt (KH)
+NguoiDung "0..1" --o "0..*" YeuCauThuGom : nhận (NV)
+NguoiDung "1" *-- "0..*" LichSuDoiThuong
+NguoiDung "1" *-- "0..*" GiaoDichDiem
+NguoiDung "1" *-- "0..*" ThongBao
+
+LoaiRac "1" --o "*" YeuCauThuGom : loại đăng ký
+LoaiRac "0..1" --o "*" YeuCauThuGom : loại xác minh
+
+YeuCauThuGom "1" *-- "1..*" LichSuTrangThai
+
+PhanThuong "1" *-- "0..*" LichSuDoiThuong
+
+@enduml

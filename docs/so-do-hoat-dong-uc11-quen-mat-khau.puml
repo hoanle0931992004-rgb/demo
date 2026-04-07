@@ -1,0 +1,62 @@
+@startuml UC11_Quen_mat_khau_hoat_dong
+title UC11 - Quên mật khẩu (sơ đồ hoạt động)
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+
+|Người dùng|
+start
+note right
+  **Điều kiện trước:** Người dùng đã có tài khoản trong hệ thống.
+  **Tác nhân:** Khách hàng hoặc Nhân viên (đã đăng ký).
+end note
+label nhap_email
+:1. Truy cập trang quên mật khẩu và nhập email đăng ký;
+:2. Gửi yêu cầu khôi phục mật khẩu;
+
+|Hệ thống|
+:3. Kiểm tra email tồn tại trong hệ thống;
+
+if (Email có trong hệ thống?) then (Có)
+  :4. Tạo token đặt lại mật khẩu, lưu vào bảng password_resets với thời hạn;
+  :5. Gửi email chứa link đặt lại mật khẩu đến email người dùng;
+
+  |Người dùng|
+  :6. Mở link trong email (trước khi hết hạn);
+
+  |Hệ thống|
+  :7. Hiển thị form nhập mật khẩu mới và xác nhận mật khẩu;
+
+  |Người dùng|
+  :8. Nhập mật khẩu mới và xác nhận;
+
+  |Hệ thống|
+  :9. Kiểm tra token còn hợp lệ;
+
+  if (Token còn hợp lệ?) then (Đúng)
+    :10. Cập nhật mật khẩu mới, xóa token;
+    :11. Hiển thị thông báo thành công, chuyển đến trang đăng nhập;
+    note right
+      **12. Kết thúc use case.**
+      **Điều kiện sau:** Mật khẩu đã cập nhật,
+      có thể đăng nhập bằng mật khẩu mới.
+    end note
+    stop
+  else (9a - Token hết hạn / không hợp lệ)
+    #FFCDD2:Hiển thị "Link đã hết hạn";
+    note right
+      **Luồng 9a:** Yêu cầu gửi lại yêu cầu quên mật khẩu
+    end note
+    goto nhap_email
+  endif
+
+else (3a - Email không tồn tại)
+  #FFCDD2:Hiển thị thông báo "Email chưa được đăng ký";
+  note right
+    **Luồng 3a**
+  end note
+  goto nhap_email
+endif
+
+@enduml

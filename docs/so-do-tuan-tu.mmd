@@ -1,0 +1,26 @@
+%% Biểu đồ tuần tự - Người dùng, Form, Control, Database
+%% Xem tại: https://mermaid.live
+
+%% === ĐĂNG KÝ ===
+sequenceDiagram
+    participant U as Người dùng
+    participant F as Form
+    participant C as Control
+    participant D as Database
+
+    U->>F: Truy cập trang đăng ký
+    F->>U: Hiển thị form nhập thông tin
+    U->>F: Nhập email, mật khẩu, họ tên
+    U->>F: Gửi đăng ký
+    F->>C: POST /api/auth/register
+    C->>C: Xác thực dữ liệu
+
+    alt Thông tin hợp lệ
+        C->>D: INSERT User
+        D->>C: Đã lưu
+        C->>F: 201 Created
+        F->>U: Thông báo đăng ký thành công
+    else Thông tin không hợp lệ
+        C->>F: 400 Bad Request
+        F->>U: Hiển thị lỗi, yêu cầu nhập lại
+    end

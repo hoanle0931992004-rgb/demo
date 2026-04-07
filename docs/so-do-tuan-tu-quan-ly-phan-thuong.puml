@@ -1,0 +1,77 @@
+@startuml UC16_Quan_ly_phan_thuong_tuan_tu
+' Dong bo voi so-do-tuan-tu-uc16-quan-ly-phan-thuong.puml
+
+title UC16 - Quản lý phần thưởng (Admin) - biểu đồ tuần tự
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Quản trị viên" as AD
+boundary "Form quản lý và phần thưởng" as F
+control "Điều khiển quản lý và phần thưởng" as C
+database "CSDL" as DB
+
+note over AD
+  Điều kiện trước: Admin đã đăng nhập.
+end note
+
+== Bước 1-2 ==
+AD -> F: 1. Truy cập trang quản lý phần thưởng\n(đã đăng nhập Admin)
+activate F
+F -> C: Yêu cầu dữ liệu quản lý phần thưởng (session Admin)
+activate C
+deactivate F
+
+C -> DB: "SELECT id_phan_thuong, ten_phan_thuong, mo_ta,\ndiem_doi, so_luong_con, hoat_dong\nFROM phan_thuongs\nORDER BY ten_phan_thuong"
+activate DB
+DB --> C: "Danh sách phần thưởng"
+deactivate DB
+
+activate F
+C --> F: "Gói dữ liệu danh mục phần thưởng"
+F --> AD: "2. Hiển thị tên, mô tả, điểm đổi, số lượng còn"
+deactivate F
+deactivate C
+
+== Bước 3-7 ==
+AD -> F: "3. Chọn thêm / sửa / xóa / cấu hình điểm"
+activate F
+F -> C: "Yêu cầu thao tác cụ thể"
+activate C
+deactivate F
+
+alt Thêm hoặc sửa hoặc cấu hình điểm
+  C --> F: "4. Form nhập (tên, mô tả, điểm đổi, số lượng)"
+  F --> AD: "Hiển thị form"
+  AD -> F: "5. Gửi dữ liệu"
+  F -> C: "Dữ liệu phần thưởng"
+  C -> DB: "INSERT INTO phan_thuongs (...)\nhoặc UPDATE phan_thuongs SET ...\nWHERE id_phan_thuong = ?"
+  activate DB
+  DB --> C: OK
+  deactivate DB
+  C --> F: "Đã lưu"
+  F --> AD: "6. Thông báo thành công"
+  deactivate C
+
+else Xóa
+  C --> F: "4. Xác nhận xóa"
+  F --> AD: "Hộp thoại xác nhận"
+  AD -> F: "5. Xác nhận xóa"
+  F -> C: "Yêu cầu xóa"
+  C -> DB: "DELETE FROM phan_thuongs\nWHERE id_phan_thuong = ?"
+  activate DB
+  DB --> C: OK
+  deactivate DB
+  C --> F: "Đã xóa"
+  F --> AD: "6. Thông báo thành công"
+  deactivate C
+end
+
+note over AD
+  7. Kết thúc use case.
+  Điều kiện sau: Danh mục phần thưởng đã được cập nhật.
+  (Không có luồng thay thế.)
+end note
+
+@enduml

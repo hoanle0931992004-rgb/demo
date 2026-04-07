@@ -1,0 +1,34 @@
+%% Sơ đồ hoạt động - Đăng nhập
+%% 2 swimlanes: Người dùng, Hệ thống
+%% Xem tại: https://mermaid.live
+
+flowchart TB
+    subgraph NguoiDung["Người dùng"]
+        direction TB
+        A1([Bắt đầu])
+        A3[Nhập thông tin đăng nhập / Đăng nhập]
+    end
+
+    subgraph HeThong["Hệ thống"]
+        direction TB
+        A2[Yêu cầu nhập email và mật khẩu]
+        A4{Xác thực thông tin đăng nhập}
+        A5{Tài khoản bị khóa?}
+        A6[Tạo phiên đăng nhập]
+        A7[Chuyển đến trang chủ]
+        A8([Kết thúc])
+        A9[Thông báo sai email hoặc mật khẩu]
+        A10[Thông báo tài khoản bị khóa]
+    end
+
+    A1 --> A2
+    A2 --> A3
+    A3 --> A4
+    A4 -->|Đúng| A5
+    A5 -->|Không| A6
+    A6 --> A7
+    A7 --> A8
+    A5 -->|Có| A10
+    A10 --> A8
+    A4 -->|Sai| A9
+    A9 --> A2

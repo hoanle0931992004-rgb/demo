@@ -1,0 +1,51 @@
+@startuml Sơ đồ hoạt động - Tạo yêu cầu thu gom rác
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+
+|Khách hàng|
+start
+:Yêu cầu tạo yêu cầu thu gom;
+
+|Hệ thống|
+:Hiển thị form nhập thông tin;
+
+|Khách hàng|
+:Nhập loại rác, số lượng, địa chỉ thu gom;
+
+if (Có tải ảnh rác?) then (Có)
+  |Khách hàng|
+  :Tải ảnh rác lên;
+  |Hệ thống|
+  :AI phân tích ảnh;
+  :Tự động điền loại rác;
+  |Khách hàng|
+  :Kiểm tra, chỉnh sửa (nếu cần);
+else (Không)
+  |Khách hàng|
+  :Tiếp tục;
+endif
+
+|Khách hàng|
+:Xác nhận và gửi yêu cầu;
+
+|Hệ thống|
+:Xác thực thông tin;
+
+if (Thông tin hợp lệ?) then (Đúng)
+  :Lưu yêu cầu thu gom;
+  :Thông báo tạo yêu cầu thành công;
+  stop
+else (Sai)
+  #FFCDD2:Thông báo lỗi;
+  note right
+    **Quay lại** form nhập
+    để khách hàng sửa
+  end note
+  :Hiển thị form nhập thông tin;
+  |Khách hàng|
+  :Nhập loại rác, số lượng, địa chỉ thu gom;
+  detach
+endif
+
+@enduml

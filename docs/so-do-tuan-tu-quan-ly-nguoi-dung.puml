@@ -1,0 +1,95 @@
+@startuml UC13_Quan_ly_nguoi_dung_tuan_tu
+' Dong bo voi so-do-tuan-tu-uc13-quan-ly-nguoi-dung.puml
+
+title UC13 - Quản lý người dùng (Admin) - biểu đồ tuần tự (rút gọn)
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Quản trị viên" as AD
+boundary "Form quản lý và người dùng" as F
+control "Điều khiển quản lý và người dùng" as C
+database "CSDL" as DB
+
+note over AD
+  Điều kiện trước: Admin đã đăng nhập.
+end note
+
+== Bước 1-2 ==
+AD -> F: 1. Truy cập trang quản lý người dùng\n(đã đăng nhập Admin)
+activate F
+F -> C: Yêu cầu dữ liệu quản lý người dùng (session Admin)
+activate C
+deactivate F
+
+C -> DB: "SELECT danh sách nguoi_dungs + admins"
+activate DB
+DB --> C: "Danh sách"
+deactivate DB
+
+activate F
+C --> F: "Gói dữ liệu danh sách người dùng"
+F --> AD: "2. Hiển thị KH, NV, admin"
+deactivate F
+deactivate C
+
+== Bước 3-7 ==
+AD -> F: "3. Chọn thao tác"
+activate F
+F -> C: "Yêu cầu thao tác cụ thể"
+activate C
+deactivate F
+
+alt Xem chi tiết
+  C -> DB: "SELECT chi tiết theo id"
+  activate DB
+  DB --> C: "Dữ liệu"
+  deactivate DB
+  C --> F: "Chi tiết"
+  F --> AD: "4. Hiển thị chi tiết"
+  deactivate C
+
+else Thêm mới
+  C --> F: "4. Form thêm"
+  F --> AD
+  AD -> F: "5. Nhập và gửi"
+  F -> C
+  C -> DB: "Kiểm tra email"
+  activate DB
+  DB --> C
+  deactivate DB
+  alt Email hợp lệ
+    C -> DB: "INSERT"
+    activate DB
+    DB --> C: OK
+    deactivate DB
+    C --> F
+    F --> AD: "7. Thành công"
+    deactivate C
+  else Email trùng
+    C --> F: "Lỗi trùng email"
+    F --> AD: "Nhập email khác"
+    deactivate C
+  end
+
+else Sửa hoặc khóa hoặc xóa
+  C --> F: "4. Form sửa / xác nhận khóa hoặc xóa"
+  F --> AD
+  AD -> F: "5. Gửi hoặc xác nhận"
+  F -> C
+  C -> DB: "UPDATE (sửa, khóa: bi_khoa + id_admin_khoa)\nhoặc DELETE"
+  activate DB
+  DB --> C: OK
+  deactivate DB
+  C --> F
+  F --> AD: "7. Thành công"
+  deactivate C
+end
+
+note over AD
+  8. Kết thúc use case.
+  Điều kiện sau: Danh sách cập nhật theo thao tác.
+end note
+
+@enduml

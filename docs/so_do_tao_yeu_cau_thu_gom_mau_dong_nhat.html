@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tạo yêu cầu thu gom — cùng cấu trúc, đổi màu form (như Đăng nhập)</title>
+  <style>
+    body { margin: 20px; font-family: 'Segoe UI', sans-serif; background: #fff; }
+    p { font-size: 12px; color: #444; max-width: 900px; }
+    svg { display: block; border: 1px solid #87CEEB; background: #fff; }
+    /* Form màu đồng nhất Đăng nhập: viền #87CEEB, chữ #1565C0, mũi tên #1976D2 */
+    .box { fill: #fff; stroke: #87CEEB; stroke-width: 2.2; }
+    .dia { fill: #fff; stroke: #87CEEB; stroke-width: 2.2; }
+    .start { fill: #1565C0; }
+    .end { fill: #fff; stroke: #1565C0; stroke-width: 3; }
+    .t { fill: #1565C0; font-size: 11px; text-anchor: middle; }
+    .ts { fill: #1565C0; font-size: 9.5px; text-anchor: middle; }
+    .ar { stroke: #1976D2; stroke-width: 1.8; fill: none; marker-end: url(#m); }
+    .lb { fill: #1976D2; font-size: 10px; }
+    .swim { fill: #1565C0; font-weight: bold; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <p><strong>Cấu trúc giống sơ đồ của bạn</strong> — chỉ đổi màu: nền ô trắng, viền <code>#87CEEB</code>, mũi tên <code>#1976D2</code>, chữ <code>#1565C0</code>.</p>
+
+  <svg width="920" height="1080" viewBox="0 0 920 1080" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="m" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#1976D2" />
+      </marker>
+    </defs>
+
+    <!-- Nền swimlane rất nhạt (tùy chọn) -->
+    <rect x="28" y="42" width="400" height="1000" fill="#F8FCFF" stroke="#B3E5FC"/>
+    <rect x="428" y="42" width="464" height="1000" fill="#FAFAFA" stroke="#B3E5FC"/>
+    <text x="228" y="30" class="swim" text-anchor="middle">Khách hàng</text>
+    <text x="660" y="30" class="swim" text-anchor="middle">Hệ thống</text>
+
+    <circle cx="228" cy="78" r="8" class="start"/>
+    <text x="228" y="72" class="ts" fill="#1565C0">Bắt đầu</text>
+    <line x1="228" y1="86" x2="228" y2="108" class="ar"/>
+
+    <rect x="88" y="108" width="280" height="40" rx="10" class="box"/>
+    <text x="228" y="132" class="t">Người dùng truy cập</text>
+    <line x1="368" y1="128" x2="458" y2="128" class="ar"/>
+
+    <rect x="458" y="95" width="400" height="66" rx="10" class="box"/>
+    <text x="658" y="125" class="t">Hệ thống hiển thị biểu mẫu</text>
+    <polyline points="658,161 658,195 228,195 228,218" class="ar"/>
+
+    <rect x="88" y="218" width="280" height="44" rx="10" class="box"/>
+    <text x="228" y="244" class="t">Người dùng điền loại rác, số lượng</text>
+    <line x1="228" y1="262" x2="228" y2="288" class="ar"/>
+
+    <path d="M 228 288 L 288 338 L 228 388 L 168 338 Z" class="dia"/>
+    <text x="228" y="336" class="t">Tải ảnh?</text>
+
+    <!-- Có → nhập địa chỉ (theo sơ đồ bạn) -->
+    <line x1="228" y1="388" x2="228" y2="430" class="ar"/>
+    <text x="238" y="412" class="lb">Có</text>
+    <rect x="88" y="430" width="280" height="44" rx="10" class="box"/>
+    <text x="228" y="456" class="t">Người dùng nhập địa chỉ</text>
+
+    <!-- Không → AI -->
+    <line x1="288" y1="338" x2="420" y2="338" class="ar"/>
+    <text x="348" y="330" class="lb">Không</text>
+    <rect x="420" y="308" width="320" height="60" rx="10" class="box"/>
+    <text x="580" y="338" class="t">AI phân tích ảnh</text>
+    <polyline points="580,368 580,452 228,452 228,474" class="ar"/>
+
+    <line x1="228" y1="474" x2="228" y2="510" class="ar"/>
+
+    <rect x="88" y="510" width="280" height="44" rx="10" class="box"/>
+    <text x="228" y="536" class="t">Người dùng Xác nhận gửi</text>
+    <line x1="368" y1="532" x2="520" y2="532" class="ar"/>
+
+    <path d="M 658 492 L 718 540 L 658 588 L 598 540 Z" class="dia"/>
+    <text x="658" y="532" class="ts">Thông tin</text>
+    <text x="658" y="546" class="ts">đầy đủ?</text>
+
+    <line x1="718" y1="540" x2="788" y2="540" class="ar"/>
+    <text x="748" y="532" class="lb">Sai</text>
+    <rect x="788" y="515" width="110" height="50" rx="8" class="box"/>
+    <text x="843" y="538" class="ts">Hiển thị lỗi</text>
+    <text x="843" y="552" class="ts">yêu cầu bổ sung</text>
+    <polyline points="843,515 843,128 658,128 658,95" class="ar"/>
+    <text x="800" y="118" class="lb">Quay lại</text>
+
+    <line x1="658" y1="588" x2="658" y2="630" class="ar"/>
+    <text x="672" y="614" class="lb">Đúng</text>
+    <rect x="508" y="630" width="300" height="38" rx="10" class="box"/>
+    <text x="658" y="654" class="t">Lưu PENDING</text>
+    <line x1="658" y1="668" x2="658" y2="702" class="ar"/>
+    <rect x="508" y="702" width="300" height="40" rx="10" class="box"/>
+    <text x="658" y="726" class="t">Thành công</text>
+    <line x1="658" y1="742" x2="658" y2="778" class="ar"/>
+    <circle cx="658" cy="795" r="12" class="end"/>
+    <circle cx="658" cy="795" r="7" fill="#1565C0"/>
+    <text x="658" y="825" class="ts">Kết thúc</text>
+  </svg>
+</body>
+</html>

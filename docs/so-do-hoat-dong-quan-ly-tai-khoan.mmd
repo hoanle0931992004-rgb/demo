@@ -1,0 +1,52 @@
+%% Sơ đồ hoạt động - Quản lý tài khoản cá nhân (detai.md 3.2.1)
+%% Xem thông tin | Cập nhật thông tin | Đổi mật khẩu
+%% Xem tại: https://mermaid.live
+
+flowchart TB
+    subgraph KhachHang["Khách hàng"]
+        A1([Bắt đầu])
+        A2[Yêu cầu quản lý tài khoản]
+        A3[Chọn thao tác]
+        A4a[Chỉnh sửa họ tên, SĐT, địa chỉ]
+        A4b[Gửi cập nhật]
+        A5a[Nhập mật khẩu hiện tại và mới]
+        A5b[Gửi đổi mật khẩu]
+        A6[Xem thông tin cá nhân]
+    end
+
+    subgraph HeThong["Hệ thống"]
+        B1[Lấy thông tin, hiển thị trang]
+        B2{Xác thực dữ liệu}
+        B3[Lưu thông tin]
+        B4[Thông báo cập nhật thành công]
+        B5{Xác thực mật khẩu hiện tại}
+        B6[Cập nhật mật khẩu mới]
+        B7[Thông báo đổi mật khẩu thành công]
+        B8[Thông báo lỗi]
+        A7([Kết thúc])
+    end
+
+    A1 --> A2
+    A2 --> B1
+    B1 --> A3
+    A3 --> A4a
+    A3 --> A5a
+    A3 --> A6
+
+    A4a --> A4b
+    A4b --> B2
+    B2 -->|Đúng| B3
+    B3 --> B4
+    B4 --> A7
+    B2 -->|Sai| B8
+    B8 --> A7
+
+    A5a --> A5b
+    A5b --> B5
+    B5 -->|Đúng| B6
+    B6 --> B7
+    B7 --> A7
+    B5 -->|Sai| B8
+    B8 --> A7
+
+    A6 --> A7

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sơ đồ hoạt động — Quên mật khẩu (UC11)</title>
+  <style>
+    body { margin: 16px; font-family: 'Segoe UI', sans-serif; background: #fff; }
+    p { font-size: 12px; color: #444; max-width: 960px; }
+    svg { display: block; border: 1px solid #87CEEB; background: #fff; }
+    .box { fill: #fff; stroke: #87CEEB; stroke-width: 2.2; }
+    .dia { fill: #fff; stroke: #87CEEB; stroke-width: 2.2; }
+    .err { fill: #FFEBEE; stroke: #E57373; stroke-width: 2; }
+    .start { fill: #1565C0; }
+    .end { fill: #fff; stroke: #1565C0; stroke-width: 3; }
+    .t { fill: #1565C0; font-size: 11px; text-anchor: middle; }
+    .ts { fill: #1565C0; font-size: 9.5px; text-anchor: middle; }
+    .ar { stroke: #1976D2; stroke-width: 1.8; fill: none; marker-end: url(#m); }
+    .ar-dashed { stroke: #1976D2; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; marker-end: url(#m); }
+    .lb { fill: #1976D2; font-size: 9.5px; }
+    .swim { fill: #1565C0; font-weight: bold; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <p><strong>Quên mật khẩu (UC11)</strong> — swimlane <strong>Người dùng</strong> | <strong>Hệ thống</strong>. Màu: viền <code>#87CEEB</code>, mũi tên <code>#1976D2</code>, chữ <code>#1565C0</code>. Mở file này trong trình duyệt → chụp màn hình hoặc In → PDF.</p>
+
+  <svg width="920" height="1280" viewBox="0 0 920 1280" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="m" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#1976D2" />
+      </marker>
+    </defs>
+
+    <rect x="28" y="42" width="400" height="1210" fill="#F8FCFF" stroke="#B3E5FC"/>
+    <rect x="428" y="42" width="464" height="1210" fill="#FAFAFA" stroke="#B3E5FC"/>
+    <text x="228" y="30" class="swim" text-anchor="middle">Người dùng</text>
+    <text x="660" y="30" class="swim" text-anchor="middle">Hệ thống</text>
+
+    <!-- Bắt đầu -->
+    <circle cx="228" cy="78" r="8" class="start"/>
+    <text x="228" y="72" class="ts" fill="#fff">Bắt đầu</text>
+    <line x1="228" y1="86" x2="228" y2="108" class="ar"/>
+
+    <rect x="88" y="108" width="280" height="44" rx="10" class="box"/>
+    <text x="228" y="128" class="ts">Truy cập trang quên mật khẩu</text>
+    <text x="228" y="142" class="ts">và nhập email đăng ký</text>
+    <line x1="228" y1="152" x2="228" y2="178" class="ar"/>
+
+    <rect x="88" y="178" width="280" height="36" rx="10" class="box"/>
+    <text x="228" y="200" class="t">Gửi yêu cầu khôi phục mật khẩu</text>
+    <line x1="368" y1="196" x2="458" y2="196" class="ar"/>
+
+    <!-- Hệ thống: kiểm tra email -->
+    <rect x="458" y="168" width="400" height="56" rx="10" class="box"/>
+    <text x="658" y="195" class="t">Kiểm tra email tồn tại</text>
+    <text x="658" y="210" class="ts">trong hệ thống</text>
+    <line x1="658" y1="224" x2="658" y2="252" class="ar"/>
+
+    <path d="M 658 252 L 718 302 L 658 352 L 598 302 Z" class="dia"/>
+    <text x="658" y="298" class="t">Email tồn tại?</text>
+
+    <!-- Không: thông báo + quay lại -->
+    <line x1="718" y1="302" x2="788" y2="302" class="ar"/>
+    <text x="748" y="294" class="lb">Không</text>
+    <rect x="788" y="278" width="110" height="48" rx="8" class="err"/>
+    <text x="843" y="298" class="ts" fill="#C62828">Email chưa</text>
+    <text x="843" y="312" class="ts" fill="#C62828">đăng ký</text>
+    <path d="M 843 326 L 843 360 L 228 360 L 228 152" class="ar-dashed"/>
+    <text x="520" y="355" class="lb">Quay lại nhập email</text>
+
+    <!-- Có: tạo token, gửi mail -->
+    <line x1="658" y1="352" x2="658" y2="388" class="ar"/>
+    <text x="668" y="376" class="lb">Có</text>
+    <rect x="458" y="388" width="400" height="52" rx="10" class="box"/>
+    <text x="658" y="412" class="t">Tạo token, lưu password_resets</text>
+    <text x="658" y="428" class="ts">(có thời hạn)</text>
+    <line x1="658" y1="440" x2="658" y2="468" class="ar"/>
+
+    <rect x="458" y="468" width="400" height="44" rx="10" class="box"/>
+    <text x="658" y="494" class="t">Gửi email chứa link đặt lại mật khẩu</text>
+    <line x1="458" y1="490" x2="368" y2="490" class="ar"/>
+
+    <rect x="88" y="468" width="280" height="44" rx="10" class="box"/>
+    <text x="228" y="494" class="t">Mở link trong email</text>
+    <text x="228" y="508" class="ts">(trước khi hết hạn)</text>
+    <line x1="228" y1="512" x2="228" y2="548" class="ar"/>
+    <line x1="228" y1="548" x2="658" y2="548" class="ar"/>
+    <line x1="658" y1="548" x2="658" y2="568" class="ar"/>
+
+    <rect x="458" y="568" width="400" height="52" rx="10" class="box"/>
+    <text x="658" y="592" class="t">Hiển thị form mật khẩu mới</text>
+    <text x="658" y="608" class="ts">và xác nhận mật khẩu</text>
+    <line x1="458" y1="594" x2="368" y2="594" class="ar"/>
+
+    <rect x="88" y="568" width="280" height="44" rx="10" class="box"/>
+    <text x="228" y="594" class="t">Nhập mật khẩu mới và xác nhận</text>
+    <line x1="228" y1="612" x2="228" y2="648" class="ar"/>
+    <line x1="228" y1="648" x2="658" y2="648" class="ar"/>
+    <line x1="658" y1="648" x2="658" y2="678" class="ar"/>
+
+    <rect x="458" y="678" width="400" height="40" rx="10" class="box"/>
+    <text x="658" y="702" class="t">Kiểm tra token còn hợp lệ</text>
+    <line x1="658" y1="718" x2="658" y2="748" class="ar"/>
+
+    <path d="M 658 748 L 718 798 L 658 848 L 598 798 Z" class="dia"/>
+    <text x="658" y="794" class="t">Token hợp lệ?</text>
+
+    <!-- Token không: hết hạn -->
+    <line x1="718" y1="798" x2="788" y2="798" class="ar"/>
+    <text x="748" y="790" class="lb">Không</text>
+    <rect x="788" y="774" width="110" height="48" rx="8" class="err"/>
+    <text x="843" y="794" class="ts" fill="#C62828">Link hết hạn</text>
+    <path d="M 843 822 L 843 420 L 24 420 L 24 128 L 88 128" class="ar-dashed"/>
+    <text x="200" y="408" class="lb">Gửi lại yêu cầu quên mật khẩu</text>
+
+    <!-- Token có: cập nhật -->
+    <line x1="658" y1="848" x2="658" y2="888" class="ar"/>
+    <text x="668" y="872" class="lb">Có</text>
+    <rect x="458" y="888" width="400" height="44" rx="10" class="box"/>
+    <text x="658" y="914" class="t">Cập nhật mật khẩu mới, xóa token</text>
+    <line x1="658" y1="932" x2="658" y2="962" class="ar"/>
+
+    <rect x="458" y="962" width="400" height="52" rx="10" class="box"/>
+    <text x="658" y="986" class="t">Thông báo thành công,</text>
+    <text x="658" y="1002" class="ts">chuyển đến trang đăng nhập</text>
+    <line x1="658" y1="1014" x2="658" y2="1056" class="ar"/>
+
+    <circle cx="658" cy="1088" r="14" class="end"/>
+    <text x="658" y="1092" class="ts">Kết thúc</text>
+  </svg>
+</body>
+</html>

@@ -1,0 +1,228 @@
+' docs/luonghd.md — Khách hàng (UC04–UC09), logic đã rà soát
+
+@startuml luonghd-uc04-quan-ly-tai-khoan
+title UC04: Quản lý tài khoản cá nhân
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Đăng nhập, truy cập trang quản lý tài khoản;
+
+|Hệ thống|
+:Hiển thị thông tin cá nhân hiện tại\n(họ tên, email, SĐT, địa chỉ, avatar);
+
+|Người dùng|
+if (Thao tác?) then (Cập nhật thông tin)
+  :Chỉnh sửa và gửi lên hệ thống;
+  |Hệ thống|
+  :Lưu thông tin mới, thông báo thành công;
+else (Đổi mật khẩu)
+  repeat
+    |Người dùng|
+    :Nhập mật khẩu cũ, mật khẩu mới, xác nhận;
+    |Hệ thống|
+    :Kiểm tra mật khẩu cũ đúng;
+    if (Đúng?) then (Đúng)
+      :Cập nhật mật khẩu mới;
+      break
+    else (Sai)
+      #FFCDD2:Hiển thị lỗi, yêu cầu nhập lại;
+    endif
+  repeat while (Nhập lại?) is (có)
+  ->Không;
+endif
+
+stop
+
+@enduml
+
+@startuml luonghd-uc05-tao-yeu-cau-thu-gom
+title UC05: Tạo yêu cầu thu gom
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Truy cập chức năng tạo yêu cầu thu gom;
+
+|Hệ thống|
+:Hiển thị form (loại rác, số lượng, địa chỉ, ngày hẹn, ghi chú);
+
+repeat
+  |Người dùng|
+  :Chọn loại rác, nhập số lượng ước tính;
+  if (Tải ảnh rác?) then (Có)
+    :Tải ảnh lên;
+    |Hệ thống|
+    :AI phân tích ảnh, gợi ý loại rác, tự điền;
+  else (Không)
+    |Người dùng|
+    :Nhập thủ công loại rác;
+  endif
+  |Người dùng|
+  :Nhập địa chỉ và các thông tin còn lại;
+  :Xác nhận và gửi yêu cầu;
+  |Hệ thống|
+  :Kiểm tra đủ thông tin bắt buộc;
+  if (Đủ?) then (Đủ)
+    break
+  else (Thiếu)
+    #FFCDD2:Hiển thị lỗi, yêu cầu bổ sung;
+  endif
+repeat while (Sửa và gửi lại?) is (có)
+->Không;
+
+|Hệ thống|
+:Lưu yêu cầu (trạng thái PENDING);
+:Thông báo thành công và thông tin yêu cầu;
+stop
+
+@enduml
+
+@startuml luonghd-uc06-theo-doi-trang-thai
+title UC06: Theo dõi trạng thái yêu cầu
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Truy cập trang theo dõi yêu cầu;
+
+|Hệ thống|
+:Hiển thị danh sách yêu cầu\n(PENDING, COLLECTING, COMPLETED, CANCELLED);
+
+|Người dùng|
+:Chọn xem chi tiết một yêu cầu;
+
+|Hệ thống|
+:Hiển thị chi tiết và lịch sử cập nhật trạng thái;
+
+|Người dùng|
+if (Chọn hủy yêu cầu?) then (Có)
+  |Hệ thống|
+  if (Trạng thái là PENDING?) then (Có)
+    :Cập nhật trạng thái CANCELLED;
+  else (Không)
+    #FFCDD2:Thông báo không thể hủy;
+  endif
+else (Không)
+endif
+
+stop
+
+@enduml
+
+@startuml luonghd-uc07-xem-diem
+title UC07: Xem điểm
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Truy cập trang quản lý điểm;
+
+|Hệ thống|
+:Hiển thị tổng điểm hiện có;
+:Hiển thị lịch sử tích điểm;
+:Hiển thị lịch sử sử dụng điểm;
+:Hiển thị bảng quy đổi điểm theo loại rác;
+stop
+
+@enduml
+
+@startuml luonghd-uc08-doi-thuong
+title UC08: Đổi thưởng
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Truy cập trang đổi thưởng;
+
+|Hệ thống|
+:Hiển thị danh sách phần thưởng (điểm đổi, số lượng còn);
+
+|Người dùng|
+:Chọn phần thưởng;
+
+|Hệ thống|
+:Kiểm tra điểm đủ và phần thưởng còn hàng;
+if (Đủ điểm?) then (Đủ)
+  if (Còn hàng?) then (Có)
+    |Người dùng|
+    :Xác nhận đổi thưởng;
+    |Hệ thống|
+    :Trừ điểm, cập nhật số lượng, ghi lịch sử đổi thưởng;
+    :Thông báo đổi thưởng thành công;
+    stop
+  else (Hết hàng)
+    #FFCDD2:Hiển thị "Phần thưởng đã hết",\nyêu cầu chọn phần thưởng khác;
+    stop
+  endif
+else (Không đủ)
+  #FFCDD2:Hiển thị "Điểm không đủ",\nyêu cầu tích thêm điểm;
+  stop
+endif
+
+@enduml
+
+@startuml luonghd-uc09-thong-ke
+title UC09: Thống kê cá nhân
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam ActivityFontSize 12
+skinparam ActivityBorderColor #4169E1
+skinparam ArrowColor #4169E1
+skinparam swimlaneTitleBackgroundColor #B3E5FC
+skinparam swimlaneBorderColor #0288D1
+
+|Người dùng|
+start
+:Truy cập trang thống kê cá nhân;
+
+|Hệ thống|
+:Hiển thị tổng quan (yêu cầu, kg rác, điểm nhận, điểm đã dùng);
+:Hiển thị thống kê theo loại rác;
+
+|Người dùng|
+if (Chọn khoảng thời gian?) then (Có)
+  |Hệ thống|
+  :Hiển thị thống kê và biểu đồ theo khoảng thời gian;
+else (Không)
+endif
+
+stop
+
+@enduml

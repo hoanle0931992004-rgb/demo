@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>Mô hình vật lý — Smart Recycling (PostgreSQL)</title>
+  <style>
+    body { font-family: "Times New Roman", Times, serif; font-size: 11pt; margin: 24px; }
+    p.tbl-title { margin: 18px 0 6px 0; }
+    table.physical { border-collapse: collapse; width: 100%; max-width: 900px; margin-bottom: 8px; }
+    table.physical th,
+    table.physical td { border: 1px solid #000; padding: 4px 8px; vertical-align: top; }
+    table.physical thead th { background: #c6e0b4; font-weight: bold; text-align: left; }
+    table.physical tbody tr.row-pk td { font-weight: bold; }
+    .note { font-size: 10pt; color: #333; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<p class="note"><strong>Ghi chú:</strong> Hệ quản trị <strong>PostgreSQL</strong>. Khóa chính dạng <code>varchar(64)</code> do ứng dụng gán (không dùng auto_increment). Cột <strong>Extra</strong>: PK = khóa chính; các ràng buộc DEFAULT, UNIQUE, FK ghi rõ như bảng.</p>
+
+<!-- • admins -->
+<p class="tbl-title"><strong>• admins</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>email</td><td>varchar(255)</td><td>No</td><td>UNIQUE</td><td></td></tr>
+    <tr><td>mat_khau</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>ho_ten</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+    <tr><td>ngay_cap_nhat</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • nguoi_dungs -->
+<p class="tbl-title"><strong>• nguoi_dungs</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>email</td><td>varchar(255)</td><td>No</td><td>UNIQUE</td><td></td></tr>
+    <tr><td>mat_khau</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>ho_ten</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>so_dien_thoai</td><td>varchar(32)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>dia_chi</td><td>varchar(500)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>avatar</td><td>varchar(500)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>vai_tro</td><td>varchar(32)</td><td>No</td><td>DEFAULT 'CUSTOMER'</td><td></td></tr>
+    <tr><td>diem</td><td>integer</td><td>No</td><td>DEFAULT 0</td><td></td></tr>
+    <tr><td>bi_khoa</td><td>boolean</td><td>No</td><td>DEFAULT false</td><td></td></tr>
+    <tr><td>id_admin_khoa</td><td>varchar(64)</td><td>Yes</td><td>FK ON DELETE SET NULL</td><td>admins.id</td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+    <tr><td>ngay_cap_nhat</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • password_resets -->
+<p class="tbl-title"><strong>• password_resets</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>id_nguoi_dung</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE CASCADE</td><td>nguoi_dungs.id</td></tr>
+    <tr><td>token</td><td>varchar(255)</td><td>No</td><td>UNIQUE</td><td></td></tr>
+    <tr><td>het_han</td><td>timestamptz</td><td>No</td><td></td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • loai_racs -->
+<p class="tbl-title"><strong>• loai_racs</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id_loai_rac</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>ten_loai</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>mo_ta</td><td>text</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>diem_tren_kg</td><td>decimal(12,4)</td><td>No</td><td>DEFAULT 0</td><td></td></tr>
+    <tr><td>hoat_dong</td><td>boolean</td><td>No</td><td>DEFAULT true</td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+    <tr><td>ngay_cap_nhat</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • yeu_cau_thu_goms -->
+<p class="tbl-title"><strong>• yeu_cau_thu_goms</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id_yeu_cau</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>id_khach_hang</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE RESTRICT</td><td>nguoi_dungs.id</td></tr>
+    <tr><td>id_loai_rac</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE RESTRICT</td><td>loai_racs.id_loai_rac</td></tr>
+    <tr><td>id_loai_rac_xac_minh</td><td>varchar(64)</td><td>Yes</td><td>FK ON DELETE SET NULL</td><td>loai_racs.id_loai_rac</td></tr>
+    <tr><td>id_nhan_vien</td><td>varchar(64)</td><td>Yes</td><td>FK ON DELETE SET NULL</td><td>nguoi_dungs.id</td></tr>
+    <tr><td>so_luong</td><td>decimal(12,4)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>so_luong_uoc_tinh</td><td>decimal(12,4)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>khoi_luong_xac_minh</td><td>decimal(12,4)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>dia_chi</td><td>varchar(500)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>so_dien_thoai</td><td>varchar(32)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>ngay_muon_thu_gom</td><td>timestamptz</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>ghi_chu</td><td>text</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>url_anh</td><td>varchar(1000)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>trang_thai</td><td>varchar(32)</td><td>No</td><td>DEFAULT 'PENDING'</td><td></td></tr>
+    <tr><td>diem_tich_luy</td><td>integer</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+    <tr><td>ngay_cap_nhat</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+    <tr><td>ngay_hoan_thanh</td><td>timestamptz</td><td>Yes</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • lich_su_trang_thais -->
+<p class="tbl-title"><strong>• lich_su_trang_thais</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>id_yeu_cau</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE CASCADE</td><td>yeu_cau_thu_goms.id_yeu_cau</td></tr>
+    <tr><td>trang_thai</td><td>varchar(32)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>ghi_chu</td><td>text</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • phan_thuongs -->
+<p class="tbl-title"><strong>• phan_thuongs</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id_phan_thuong</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>ten_phan_thuong</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>mo_ta</td><td>text</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>diem_doi</td><td>integer</td><td>No</td><td></td><td></td></tr>
+    <tr><td>so_luong_con</td><td>integer</td><td>No</td><td>DEFAULT 0</td><td></td></tr>
+    <tr><td>url_anh</td><td>varchar(1000)</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>hoat_dong</td><td>boolean</td><td>No</td><td>DEFAULT true</td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+    <tr><td>ngay_cap_nhat</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • lich_su_doi_thuongs -->
+<p class="tbl-title"><strong>• lich_su_doi_thuongs</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>id_nguoi_dung</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE CASCADE</td><td>nguoi_dungs.id</td></tr>
+    <tr><td>id_phan_thuong</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE RESTRICT</td><td>phan_thuongs.id_phan_thuong</td></tr>
+    <tr><td>diem_su_dung</td><td>integer</td><td>No</td><td></td><td></td></tr>
+    <tr><td>trang_thai</td><td>varchar(32)</td><td>No</td><td>DEFAULT 'completed'</td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • giao_dich_diems -->
+<p class="tbl-title"><strong>• giao_dich_diems</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>id_nguoi_dung</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE CASCADE</td><td>nguoi_dungs.id</td></tr>
+    <tr><td>so_diem</td><td>integer</td><td>No</td><td></td><td></td></tr>
+    <tr><td>loai</td><td>varchar(32)</td><td>No</td><td>earn / redeem / admin_adjust</td><td></td></tr>
+    <tr><td>mo_ta</td><td>text</td><td>Yes</td><td></td><td></td></tr>
+    <tr><td>id_tham_chieu</td><td>varchar(64)</td><td>Yes</td><td>tham chiếu mềm</td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+<!-- • thong_baos -->
+<p class="tbl-title"><strong>• thong_baos</strong></p>
+<table class="physical">
+  <thead>
+    <tr>
+      <th>Column</th>
+      <th>Type</th>
+      <th>Null</th>
+      <th>Extra</th>
+      <th>Link to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-pk">
+      <td>id</td>
+      <td>varchar(64)</td>
+      <td>No</td>
+      <td>PK</td>
+      <td></td>
+    </tr>
+    <tr><td>id_nguoi_dung</td><td>varchar(64)</td><td>No</td><td>FK ON DELETE CASCADE</td><td>nguoi_dungs.id</td></tr>
+    <tr><td>loai</td><td>varchar(64)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>tieu_de</td><td>varchar(255)</td><td>No</td><td></td><td></td></tr>
+    <tr><td>noi_dung</td><td>text</td><td>No</td><td></td><td></td></tr>
+    <tr><td>id_tham_chieu</td><td>varchar(64)</td><td>Yes</td><td>tham chiếu mềm (vd. id_yeu_cau)</td><td></td></tr>
+    <tr><td>da_doc</td><td>boolean</td><td>No</td><td>DEFAULT false</td><td></td></tr>
+    <tr><td>ngay_tao</td><td>timestamptz</td><td>No</td><td>DEFAULT now()</td><td></td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

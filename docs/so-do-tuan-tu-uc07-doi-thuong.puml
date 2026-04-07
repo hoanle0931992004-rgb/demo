@@ -1,0 +1,80 @@
+@startuml UC07_Doi_thuong_tuan_tu
+title UC07 - Đổi thưởng (biểu đồ tuần tự)
+
+' actor | boundary | control | database
+' 3 nhánh alt phẳng (4a, 4b, thành công) - không lồng alt, tránh lỗi parser
+
+skinparam backgroundColor #FEFEFE
+skinparam ParticipantPadding 14
+skinparam SequenceMessageAlign center
+
+actor "Khách hàng" as KH
+boundary "Form đổi thưởng" as F
+control "Điều khiển đổi thưởng" as C
+database "CSDL" as DB
+
+== Bước 1-2: Truy cập và danh sách ==
+KH -> F: 1. Truy cập trang đổi thưởng\n(đã đăng nhập)
+activate F
+F -> C: Yêu cầu danh sách phần thưởng
+activate C
+C -> DB: SELECT phan_thuongs
+activate DB
+DB --> C: Tên, diem_doi, so_luong_con
+deactivate DB
+C --> F: Dữ liệu hiển thị
+deactivate C
+F --> KH: 2. Danh sách phần thưởng có sẵn
+deactivate F
+
+== Bước 3-4: Chọn và kiểm tra ==
+KH -> F: 3. Chọn phần thưởng muốn đổi
+activate F
+F -> C: id phần thưởng
+activate C
+deactivate F
+
+C -> DB: "SELECT diem KH; SELECT phan_thuong"
+activate DB
+DB --> C: Điểm hiện có, diem_doi, so_luong_con
+deactivate DB
+
+C -> C: 4. Kiểm tra đủ điểm và còn hàng
+
+alt [4a] Điểm không đủ
+  C --> F: Thông báo lỗi
+  F --> KH: "Điểm không đủ, yêu cầu tích thêm điểm"
+  deactivate C
+else [4b] Hết hàng
+  C --> F: Thông báo lỗi
+  F --> KH: "Phần thưởng đã hết, chọn phần thưởng khác"
+  deactivate C
+else [Đủ điểm và còn hàng] Xác nhận đổi
+  activate F
+  C --> F: Cho phép xác nhận
+  F --> KH: Hiển thị tóm tắt (điểm trừ, còn lại)
+  deactivate F
+
+  KH -> F: 5. Xác nhận đổi thưởng
+  activate F
+  F -> C: Xác nhận giao dịch
+  deactivate F
+
+  C -> DB: "UPDATE nguoi_dungs tru diem, UPDATE phan_thuongs giam ton, INSERT lich_su_doi_thuongs, INSERT giao_dich_diems redeem"
+  activate DB
+  DB --> C: OK
+  deactivate DB
+
+  activate F
+  C --> F: Đổi thưởng thành công
+  F --> KH: 7. Thông báo thành công
+  deactivate F
+  deactivate C
+  note right of KH
+    Điều kiện sau - điểm đã trừ,
+    đã ghi nhận đổi thưởng.
+    8. Kết thúc use case.
+  end note
+end
+
+@enduml

@@ -1,0 +1,38 @@
+%% Sơ đồ hoạt động - Tạo yêu cầu thu gom rác
+%% detai.md 3.2.2: loại rác, số lượng, địa chỉ, ảnh (tùy chọn), AI nhận diện
+%% Xem tại: https://mermaid.live
+
+flowchart TB
+    subgraph KhachHang["Khách hàng"]
+        A1([Bắt đầu])
+        A3[Nhập loại rác, số lượng, địa chỉ thu gom]
+        A5{Tải ảnh rác?}
+        A6[Tải ảnh rác lên]
+        A8[Kiểm tra, chỉnh sửa loại rác nếu cần]
+        A10[Xác nhận và gửi yêu cầu]
+    end
+
+    subgraph HeThong["Hệ thống"]
+        A2[Hiển thị form nhập thông tin]
+        A4[AI phân tích ảnh - Tự động điền loại rác]
+        A9{Xác thực thông tin}
+        A11[Lưu yêu cầu thu gom]
+        A12[Thông báo tạo yêu cầu thành công]
+        A13([Kết thúc])
+        A14[Thông báo lỗi]
+    end
+
+    A1 --> A2
+    A2 --> A3
+    A3 --> A5
+    A5 -->|Có| A6
+    A6 --> A4
+    A4 --> A8
+    A8 --> A10
+    A5 -->|Không| A10
+    A10 --> A9
+    A9 -->|Đúng| A11
+    A11 --> A12
+    A12 --> A13
+    A9 -->|Sai| A14
+    A14 --> A2

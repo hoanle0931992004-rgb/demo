@@ -1,0 +1,29 @@
+%% Biểu đồ tuần tự — Tạo yêu cầu thu gom (UC04)
+%% https://mermaid.live
+
+sequenceDiagram
+    actor KH as Khách hàng
+    participant F as Form
+    participant C as Control
+    participant DB as CSDL
+
+    KH->>F: Mở tạo yêu cầu
+    F-->>KH: Form loại rác, SL, địa chỉ, ngày hẹn, ghi chú
+    opt Tải ảnh
+        KH->>F: Tải ảnh
+        F->>C: Phân tích ảnh
+        C->>C: AI gợi ý loại rác
+        C-->>F: Điền gợi ý
+    end
+    KH->>F: Gửi yêu cầu
+    F->>C: Tạo yêu cầu
+    C->>C: Kiểm tra bắt buộc
+    alt Đủ thông tin
+        C->>DB: Lưu PENDING
+        DB-->>C: OK
+        C-->>F: Thành công
+        F-->>KH: Thông báo OK
+    else Thiếu (7a)
+        C-->>F: Lỗi
+        F-->>KH: Bổ sung thông tin
+    end
